@@ -29,16 +29,3 @@ Note: This code is a work in progress and will continue to evolve.
 3. Make sure to point to the correct binary with the `angr.Project` instantiation.
 4. Execute the script to begin the function-by-function symbolic execution.
 
-## Ongoing Work:
-
-- **Deadended State Processing**: The states that reach the `ret` instruction, termed `deadended` states, are yet to be processed and analyzed.
-- **Parameter Handling**: The handling of function parameters, particularly their types and sizes, will be refined further.
-- **Performance Optimization**: As with any symbolic execution task, performance can be a concern. Future iterations will work on optimizing the execution flow and possibly parallelizing certain tasks.
-
-## Feedback & Contributions:
-
-Feedback, bug reports, and pull requests are welcomed. Feel free to open an issue or submit a pull request if you believe there are enhancements to be made. Your contributions can significantly aid in the ongoing refinement and evolution of this research project.
-
----
-
-**Note**: This is a research project and while utmost care has been taken to ensure accuracy, it is always advisable to validate results in a controlled environment, especially before deploying or utilizing them in production or critical scenarios.
