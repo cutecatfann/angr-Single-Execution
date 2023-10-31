@@ -16,6 +16,9 @@ This research project uses the `angr` framework to symbolically execute each fun
 5. Create a call state for the function and initiate the `angr` simulation for symbolic execution.
 6. Display the execution results.
 
+### Testing:
+The code was tested on a set of small test programs designed to simulate various memory types and situations including pointers, return statements, and void functions. See the test functions and generated binaries in the `test` directory in this repo. After the code was tested on these programs, it was tested on the GNU CoreUtils programs like `ls` and `cat`. Please note that the GNU CoreUtils were compiled locally using the guide located [here]([https://link-url-here.org](https://askubuntu.com/questions/976002/how-to-compile-the-sorcecode-of-the-offical-ls-c-source-code)).
+
 ### Results:
 From extensive experimentation, it's evident that `angr` doesn't natively support this specific type of analysis. Making types symbolic often leads to uninitialized memory. The logs suggest that when a type is converted to symbolic, `angr` tends to erase the memory at the designated locations.
 
@@ -45,6 +48,9 @@ void main(){
     int mainval = func1(5);
 }
 ```
+This same result happened with all other test files ran. While all test files symbolically executed, the memory spaces were wiped using this code. Vanilla angr did not wipe the memory areas. 
+
+The GNU CoreUtils files that this code was tested on had the same results. While they did compile and symbolically execute, they did not return any intialized values. As such, it appears that `angr` is unable to support this style of symbolic execution.
 
 ### Challenges:
 Symbolic Memory Handling: The transition from concrete values to symbolic values has always been a major pain point in symbolic execution, as indicated by the logs which suggest that when a type is converted to symbolic, angr erases the memory at those locations. This is particularly true when working at a granularity like single functions where there's a frequent switch between symbolic and concrete execution.
