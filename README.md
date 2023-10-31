@@ -1,31 +1,45 @@
-# Symbolic Execution with angr: Focused Function Analysis
+# Symbolic Execution with angr: Single Function Analysis
 
-This research project explores a focused approach to symbolic execution using the `angr` framework, targeting one function at a time. Rather than executing an entire program flow, the aim is to symbolically evaluate each function in isolation. When a function call within the target function is encountered, instead of diving into it, the return value is simply marked as symbolic. Similarly, parameters to these function calls passed by reference are considered symbolic.
+This research project utilizes the `angr` framework to execute functions symbolically in isolation. Our approach focuses on evaluating a single function at a time, with other function calls being represented by symbolic values, rather than executing the entire program flow. When a function call within the target function is encountered, its return value is made symbolic. Similarly, any parameters to these function calls passed by reference are also considered symbolic.
 
 ### Technologies and Tools Used:
-- **angr**: A powerful platform-agnostic binary analysis framework.
-- **Ghidra**: Used for disassembly of binary code.
+- **angr**: A binary analysis framework.
+- **Ghidra**: Utilized for disassembling binary code.
+- **NM**: Employed for function analysis.
 
-## Methodology:
+### Methodology
+The code instructs `angr` to run a single function by providing the binary location of that function. It steps through the `angr` disassembler to find the desired function, generating a prototype based on input and return types using `SimTypes` provided by `angr`. The code then creates a standard `angr` state, with parameters being made symbolic. For parameters that are pointers, the pointee becomes symbolic; otherwise, the argument itself is made symbolic. A call state for the function is then created, and the `angr` simulation symbolically executes the function, subsequently printing out the results.
 
-1. **Function Enumeration**: Use `angr` to retrieve a list of all the functions in the target binary.
-2. **Symbolic Execution**: Write code that allows for the symbolic execution of each enumerated function, while treating their parameters as symbolic entities.
-3. **Function Call Handling**: Modify or extend the `angr` codebase to treat function calls within the target function as explained above, making their return values and reference-passed parameters symbolic.
-4. **Testing**: Develop tests to validate this approach. Execute these tests with both the traditional symbolic execution mechanism and this project's method to gauge differences.
+### Results
+Months of working with `angr` has shown that it does not natively support this type of analysis. Changing types to symbolic results in uninitialized memory, as `angr` does not support changing types to symbolic and wipes the memory at those locations.
 
-## Code Overview:
+The test function output showed the following warnings and results:
 
-The code provided serves as a foundation for the aforementioned methodology. The code illustrates:
-- Creating an `angr` project.
-- Generating a Control Flow Graph (CFG) for the target binary.
-- Iterating through each function and symbolically executing it, making parameters symbolic and handling internal function calls as discussed.
+```
+python3 loader.py
+WARNING | ... | The program is accessing register with an unspecified value.
+WARNING | ... | Filling register rbp with 8 unconstrained bytes referenced from ...
+WARNING | ... | Filling register rdi with 8 unconstrained bytes referenced from ...
+WARNING | ... | Exit state has over 256 possible solutions. Likely unconstrained; skipping.
+Results for function sub_100003f80:
+Deadended: 0
+Active: 0
+Errored: 0
+Register values:
+state: <SimState @ 0x100003f80>
+WARNING | ... | Filling memory at 0x400000 with 4096 unconstrained bytes referenced from ...
+Memory contents at 0x400000:
+<BV32768 mem_400000_4_32768{UNINITIALIZED}>
+```
 
-Note: This code is a work in progress and will continue to evolve.
+The output indicates that the program is dealing with unspecified values, and `angr` is filling in unconstrained symbolic variables as a coping mechanism. This results in over 256 possible solutions for the exit state, making it likely unconstrained. This could be seen as a limitation of the current methodology when it comes to dealing with uninitialized memory and symbolic variables.
 
-## How to Use:
-
-1. Ensure `angr` is installed and set up in your Python environment.
-2. Use the provided code as a foundation or reference for your own symbolic execution tasks with `angr`.
-3. Make sure to point to the correct binary with the `angr.Project` instantiation.
-4. Execute the script to begin the function-by-function symbolic execution.
-
+### How to Run
+1. Compile a test file into a binary using GCC.
+2. Run the binary through NM or another decompiler to get function addresses.
+3. Add the binary name, path, and function address to the last line in the code: `execute_func('tests/test_ret', 'sub_100003f80')`.
+4. If needed, adjust the prototype types (e.g., `prototype = SimTypeFunction(SimTypeInt(), SimTypeInt())`) to fit the function you are executing.
+5. Create a Python virtual environment and activate it.
+6. Install `angr` within the virtual environment.
+7. Run `python3 loader.py`.
+8. You can uncomment print statements at the end as you please.
