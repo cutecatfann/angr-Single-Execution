@@ -73,4 +73,4 @@ Initialize Memory and Registers: To address the issue of uninitialized memory an
 6. Install `angr`.
 7. In the virtual environment, execute `python3 loader.py`. Adjust print statements as required.
 
-Note: Ensure you're working within the virtual environment when running the analysis to avoid dependency issues.
+Note: Ensure you're working within the virtual environment when running the analysis to avoid dependency issues, especially if you are on an Apple machine. :)
