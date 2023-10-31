@@ -46,6 +46,16 @@ void main(){
 }
 ```
 
+### Challenges:
+Symbolic Memory Handling: The transition from concrete values to symbolic values has always been a major pain point in symbolic execution, as indicated by the logs which suggest that when a type is converted to symbolic, angr erases the memory at those locations. This is particularly true when working at a granularity like single functions where there's a frequent switch between symbolic and concrete execution.
+
+Missing Initialization: The various warnings regarding unspecified values and uninitialized memory regions indicate that certain variables or memory regions are being accessed without having been properly initialized, which often happens in symbolic execution when memory values aren't given concrete initial values.
+
+### Potential Next Steps
+Function Isolation: There needs to be a way way to mock or stub out external function calls. One approach could be to replace every external function call with a hook that returns a symbolic value (in case of non-void functions) and makes any reference arguments symbolic.
+
+Initialize Memory and Registers: To address the issue of uninitialized memory and registers, we might want to provide a concrete initial state to your symbolic execution environment. For instance, \initialize the stack, heap, and registers to known values before the execution starts.
+
 ### How to Run:
 1. Acquire a test file and compile it using GCC to generate a binary.
 2. Decompile the binary with NM or a similar tool to retrieve function addresses.
