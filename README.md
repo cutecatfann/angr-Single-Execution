@@ -22,7 +22,7 @@ The code was tested on a set of small test programs designed to simulate various
 ### Results:
 From extensive experimentation, it's evident that `angr` doesn't natively support this specific type of analysis. Making types symbolic often leads to uninitialized memory. The logs suggest that when a type is converted to symbolic, `angr` tends to erase the memory at the designated locations.
 
-Following are the results from the test:
+Following are the results from a test:
 ```
 python3 loader.py
 ... [multiple WARNING lines indicating access to unspecified values and uninitialized regions]
@@ -50,7 +50,9 @@ void main(){
 ```
 This same result happened with all other test files ran. While all test files symbolically executed, the memory spaces were wiped using this code. Vanilla angr did not wipe the memory areas. 
 
-The GNU CoreUtils files that this code was tested on had the same results. While they did compile and symbolically execute, they did not return any intialized values. As such, it appears that `angr` is unable to support this style of symbolic execution.
+When testing with GNU CoreUtils programs like `ls` and `cat`, the results were consistent with those from the small test programs. Although the GNU CoreUtils files compiled and symbolically executed, they did not return any initialized values, highlighting a limitation of `angr` in supporting this style of symbolic execution.
+
+Given these results, we can conclude that `angr` struggles to handle symbolic memory and uninitialized values when conducting symbolic execution at the granularity of single functions. This is a significant challenge for symbolic execution as it often requires a frequent switch between symbolic and concrete execution. Moreover, this specific approach to symbolic execution with `angr` reveals the difficulty in transitioning from concrete values to symbolic values, as evidenced by the uninitialized memory regions and warnings regarding unspecified values.
 
 ### Challenges:
 Symbolic Memory Handling: The transition from concrete values to symbolic values has always been a major pain point in symbolic execution, as indicated by the logs which suggest that when a type is converted to symbolic, angr erases the memory at those locations. This is particularly true when working at a granularity like single functions where there's a frequent switch between symbolic and concrete execution.
@@ -60,7 +62,7 @@ Missing Initialization: The various warnings regarding unspecified values and un
 ### Potential Next Steps
 Function Isolation: There needs to be a way way to mock or stub out external function calls. One approach could be to replace every external function call with a hook that returns a symbolic value (in case of non-void functions) and makes any reference arguments symbolic.
 
-Initialize Memory and Registers: To address the issue of uninitialized memory and registers, we might want to provide a concrete initial state to your symbolic execution environment. For instance, \initialize the stack, heap, and registers to known values before the execution starts.
+Initialize Memory and Registers: To address the issue of uninitialized memory and registers, it might be helpful to provide a concrete initial state to your symbolic execution environment. This could include initializing the stack, heap, and registers to known values before the execution starts.
 
 ### How to Run:
 1. Acquire a test file and compile it using GCC to generate a binary.
