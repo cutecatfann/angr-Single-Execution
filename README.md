@@ -62,7 +62,7 @@ Missing Initialization: The various warnings regarding unspecified values and un
 ### Potential Next Steps
 Function Isolation: There needs to be a way way to mock or stub out external function calls. One approach could be to replace every external function call with a hook that returns a symbolic value (in case of non-void functions) and makes any reference arguments symbolic.
 
-Initialize Memory and Registers: To address the issue of uninitialized memory and registers, it might be helpful to provide a concrete initial state to your symbolic execution environment. This could include initializing the stack, heap, and registers to known values before the execution starts.
+Initialize Memory and Registers: To address the issue of uninitialized memory and registers, it might be helpful to provide a concrete initial state to the symbolic execution environment. This could include initializing the stack, heap, and registers to known values before the execution starts.
 
 ### How to Run:
 1. Acquire a test file and compile it using GCC to generate a binary.
