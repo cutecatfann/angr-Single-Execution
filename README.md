@@ -11,7 +11,7 @@ This project utilized the `angr` binary analysis framework to execute functions 
 - **GCC**: Compiler for binaries.
 
 ### Methodology:
-1. Instruct `angr` to execute one function at a time by specifying the binary location of the function. This prevents `angr` from delving into supporting libraries.
+1. Specify the binary location of the function. This prevents `angr` from delving into supporting libraries.
 2. Traverse the `angr` disassembler until the desired function is located. If the function isn't found, the process halts.
 3. Define a prototype for the function, basing it on the input and return types. This step uses SimTypes from `angr`.
 4. Create a base `angr` state, and iterate over the parameters to mark them as symbolic. If a parameter is a pointer, its reference is made symbolic; otherwise, the argument itself is rendered symbolic.
